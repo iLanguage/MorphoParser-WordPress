@@ -58,10 +58,10 @@ function display_words() {
 
 	//TODO pass $words array to a JavaScript function that will create the SVG in the DOM
 
-	echo "<SCRIPT LANGUAGE='javascript'><!--n";
-	echo "renderSVG($words);n";
-	echo "// --></SCRIPT>n";
-	
+	$url = plugins_url();
+
+	echo "<script type='text/javascript' src='$url/MorphoParser-WordPress/js/rendersvg.js'></script>";
+	echo "<script type='text/javascript'>renderSVG($words);</script>";
 
 	//Get numbers for rand function
 	srand((double)microtime()*1000000);
@@ -109,6 +109,7 @@ function wptuts_scripts_basic()
 	wp_enqueue_script( 'renderSVG' );
 }
 add_action( 'wp_enqueue_scripts', 'wptuts_scripts_basic' );
+
 
 // Execute when the admin_notices action is called
 add_action( 'wp_loaded', 'display_words' );
