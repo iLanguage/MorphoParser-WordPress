@@ -56,9 +56,17 @@ function display_words() {
 	$a = split(" ","the of and to a in that it is was i for on you he be with as by at have are this not but had his they from she which or we an there her were one do been all their has would will what if can when so");
 	foreach ($a as $banned) unset($words[$banned]);
 
-	srand((double)microtime()*1000000);
-	$max=max($words);
+	//TODO pass $words array to a JavaScript function that will create the SVG in the DOM
 
+	echo "<SCRIPT LANGUAGE='javascript'><!--n";
+	echo "renderSVG($words);n";
+	echo "// --></SCRIPT>n";
+	
+
+	//Get numbers for rand function
+	srand((double)microtime()*1000000);
+
+	$max=max($words);
 	$height = '400';
 	$width = '800';
 	$mainx = '50';
@@ -79,9 +87,9 @@ function display_words() {
 
 
 
-/*
-		$bbox = imagettfbbox($fontsize, $transform, $font, $word);
-*/
+		/*
+		 $bbox = imagettfbbox($fontsize, $transform, $font, $word);
+		*/
 
 
 		$stringsize = strlen($word)*$fontsize;
@@ -90,6 +98,18 @@ function display_words() {
 	echo "</svg>";
 
 }
-// Now we set that function up to execute when the admin_notices action is called
+
+//Register and enqueue JavaScript
+function wptuts_scripts_basic()
+{
+	// Register the script for the plugin:
+	wp_register_script( 'renderSVG', plugins_url( '/js/rendersvg.js', __FILE__ ) );
+
+	// Enqueue the script:
+	wp_enqueue_script( 'renderSVG' );
+}
+add_action( 'wp_enqueue_scripts', 'wptuts_scripts_basic' );
+
+// Execute when the admin_notices action is called
 add_action( 'wp_loaded', 'display_words' );
 ?>
