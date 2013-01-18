@@ -56,61 +56,19 @@ function display_words() {
 	$a = split(" ","the of and to a in that it is was i for on you he be with as by at have are this not but had his they from she which or we an there her were one do been all their has would will what if can when so");
 	foreach ($a as $banned) unset($words[$banned]);
 
-	//TODO pass $words array to a JavaScript function that will create the SVG in the DOM
-
 	$url = plugins_url();
 
+	//Create div to attach SVG to
+	echo "<div id='svgimage'></div>";
+
+	//Run JavaScript to render SVG
 	echo "<script type='text/javascript' src='$url/MorphoParser-WordPress/js/rendersvg.js'></script>";
-	echo "<script type='text/javascript'>renderSVG($words);</script>";
-
-	//Get numbers for rand function
-	srand((double)microtime()*1000000);
-
-	$max=max($words);
-	$height = '400';
-	$width = '800';
-	$mainx = '50';
-	$mainy = '50';
-	$area = $height*$width;
-	$font="arial";
-
-	echo "<svg xmlns='http://www.w3.org/2000/svg'
-			xmlns:xlink='http://www.w3.org/1999/xlink'>";
-	foreach ($words as $word => $value) {
-		$xcoord = rand($mainx,$width+$mainx);
-		$ycoord = rand($mainy,$height+$mainy);
-		$fontsize=round(7+($value/$max) * ($area/2500)) . 'px';
-		$color1=rand(0,255);
-		$color2=rand(0,255);
-		$color3=rand(0,255);
-		if (rand(0,1)) $transform=90; else $transform=0;
-
-
-
-		/*
-		 $bbox = imagettfbbox($fontsize, $transform, $font, $word);
-		*/
-
-
-		$stringsize = strlen($word)*$fontsize;
-		echo "<text x=$xcoord y=$ycoord  transform='rotate($transform $xcoord $ycoord)' style='font-size:$fontsize; font-family:$font; fill:rgb($color1,$color2,$color3)'>$word</text>";
-	}
-	echo "</svg>";
+	echo "<script type='text/javascript'>renderSVG(";
+	echo json_encode($words);
+	echo ");</script>";
 
 }
 
-//Register and enqueue JavaScript
-function wptuts_scripts_basic()
-{
-	// Register the script for the plugin:
-	wp_register_script( 'renderSVG', plugins_url( '/js/rendersvg.js', __FILE__ ) );
-
-	// Enqueue the script:
-	wp_enqueue_script( 'renderSVG' );
-}
-add_action( 'wp_enqueue_scripts', 'wptuts_scripts_basic' );
-
-
-// Execute when the admin_notices action is called
+// Execute when the wp_loaded action is called
 add_action( 'wp_loaded', 'display_words' );
 ?>
