@@ -303,9 +303,7 @@ function MorphoParserController($scope) {
 							console.log(displayWords[i].word
 									+ " placed successfully. (" + (i+1) + " of "
 									+ numberOfWordsToDisplay + ")");
-							for ( var p = 0; p < itemFilledPixels.length; p++) {
-								filledPixels.push(itemFilledPixels[p]);
-							}
+							filledPixels = filledPixels.concat(itemFilledPixels);
 							j = attemptCount;
 						}
 
