@@ -13,7 +13,7 @@ function MorphoParserController($scope) {
 			var fontfamily = "Arial";
 			var maxX = SVGwidth + SVGxcoord;
 			var maxY = SVGheight + SVGycoord;
-			var attemptCount = 10;
+			var attemptCount = 20;
 
 			var SVG = function(h, w) {
 				var NS = "http://www.w3.org/2000/svg";
@@ -294,14 +294,14 @@ function MorphoParserController($scope) {
 						}
 						if (overlap == 1 && j < attemptCount - 1) {
 							console.log(displayWords[i].word
-									+ " has an overlap; trying again.");
+									+ " has an overlap; trying again. (" + j + " of " + attemptCount + ")");
 						} else if (overlap == 1 && j >= attemptCount - 1) {
 							console.log(displayWords[i].word
 									+ " cannot be placed. Deleting.");
 							svg.removeChild(textelement);
 						} else {
 							console.log(displayWords[i].word
-									+ " placed successfully. (" + i + " of "
+									+ " placed successfully. (" + (i+1) + " of "
 									+ numberOfWordsToDisplay + ")");
 							for ( var p = 0; p < itemFilledPixels.length; p++) {
 								filledPixels.push(itemFilledPixels[p]);
