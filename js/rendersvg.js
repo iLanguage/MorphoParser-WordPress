@@ -7,13 +7,14 @@ function MorphoParserController($scope) {
 			var SVGheight = 300;
 			var SVGwidth = 600;
 			var SVGarea = SVGheight * SVGwidth;
-			var SVGxcoord = 250;
-			var SVGycoord = 150;
+			var SVGxcoord = 50;
+			var SVGycoord = 50;
 			var fillcolor = "white";
 			var fontfamily = "Arial";
 			var maxX = SVGwidth + SVGxcoord;
 			var maxY = SVGheight + SVGycoord;
 			var attemptCount = 20;
+			var deletedText = 0;
 
 			var SVG = function(h, w) {
 				var NS = "http://www.w3.org/2000/svg";
@@ -91,9 +92,6 @@ function MorphoParserController($scope) {
 			// Position words based on numberOfWordsToDisplay
 			for ( var i = 0; i < numberOfWordsToDisplay; i++) {
 				(function(index) {
-
-					console.log("Positioning " + displayWords[i].word + "("
-							+ displayWords[i].frequency + ")");
 
 					// Set random colors and create text element
 					var color1 = Math.floor(Math.random() * 255);
@@ -292,20 +290,19 @@ function MorphoParserController($scope) {
 							}
 							;
 						}
-						if (overlap == 1 && j < attemptCount - 1) {
+						if (overlap == 0) {
 							console.log(displayWords[i].word
-									+ " has an overlap; trying again. (" + j + " of " + attemptCount + ")");
-						} else if (overlap == 1 && j >= attemptCount - 1) {
-							console.log(displayWords[i].word
-									+ " cannot be placed. Deleting.");
-							svg.removeChild(textelement);
-						} else {
-							console.log(displayWords[i].word
-									+ " placed successfully. (" + (i+1) + " of "
+									+ "(" + displayWords[i].frequency + ") placed successfully. (" + (i+1) + " of "
 									+ numberOfWordsToDisplay + ")");
 							filledPixels = filledPixels.concat(itemFilledPixels);
 							j = attemptCount;
-						}
+						} else if (overlap == 1 && j >= attemptCount - 1) {
+							console.log(displayWords[i].word
+									+ "(" + displayWords[i].frequency + ") cannot be placed. (" + attemptCount + " attempts.  DELETING. ("+ (i+1) + " of "
+									+ numberOfWordsToDisplay + ")");
+								deletedText++;
+							svg.removeChild(textelement);
+						} 
 
 					}
 
@@ -330,7 +327,7 @@ function MorphoParserController($scope) {
 
 				})(i);
 			}
-			// console.log(filledPixels);
+			 console.log("Deleted items: " + deletedText);
 		} else {
 			console.log("No words.");
 		}

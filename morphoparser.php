@@ -61,7 +61,6 @@ function display_words() {
 	//Create div to attach SVG to
 	echo "<div ng-app>";
 	echo "<div ng-controller='MorphoParserController'>";
-	echo "<div id='svgimage'></div>";
 
 	//Run JavaScript to render SVG
 	echo "<script type='text/javascript' src='$url/MorphoParser-WordPress/js/angular.js'></script>";
@@ -72,6 +71,7 @@ function display_words() {
 	echo "<div><button ng-click='renderSVG(";
 	echo json_encode($words);
 	echo ");'>RUN SCRIPT</button></div>";
+	echo "<div id='svgimage'></div>";
 	echo "</div>";
 	echo "</div>";
 	
