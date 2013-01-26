@@ -76,14 +76,16 @@ function MorphoParserController($scope) {
 			}
 
 			var numberOfWordsToDisplay = prompt(
-					"Please enter the number of words to display. \n(max " + displayWords.length + ")\nPlease note that this may take several minutes.",
+					"Please enter the number of words to display. \n(max "
+							+ displayWords.length
+							+ ")\nPlease note that this may take several minutes.",
 					25);
 			var intRegex = /^\d+$/;
 			if (!intRegex.test(numberOfWordsToDisplay)) {
 				window.alert("Please try again.");
 				return;
 			}
-			
+
 			if (numberOfWordsToDisplay > displayWords.length) {
 				console.log("Changing number of words to display.");
 				numberOfWordsToDisplay = displayWords.length;
@@ -220,8 +222,8 @@ function MorphoParserController($scope) {
 							otherycoord = ycoord + textboxheight;
 						}
 
-						// If x or y are 0 and text box is still out of
-						// bounds, reduce font size until text fits
+						// If x or y are absolute minimal and text box is still
+						// out of bounds, reduce font size until text fits
 
 						if (ycoord == SVGycoord && otherycoord > maxY) {
 							for (k = fontsize; k > 10; k--) {
@@ -250,8 +252,7 @@ function MorphoParserController($scope) {
 										+ ycoord + ")");
 
 						// Check to see if current position overlaps any
-						// other
-						// item; if so, loop (max 10); if not, set current
+						// other item; if so, loop (max 10); if not, set current
 						// coordinates as filled
 						var itemFilledPixels = [];
 						var filledCoordinate = {};
@@ -288,46 +289,32 @@ function MorphoParserController($scope) {
 									m = filledPixels.length;
 								}
 							}
-							;
 						}
 						if (overlap == 0) {
-							console.log(displayWords[i].word
-									+ "(" + displayWords[i].frequency + ") placed successfully. (" + (i+1) + " of "
-									+ numberOfWordsToDisplay + ")");
-							filledPixels = filledPixels.concat(itemFilledPixels);
+							console.log(displayWords[i].word + "("
+									+ displayWords[i].frequency
+									+ ") placed successfully. (" + (i + 1)
+									+ " of " + numberOfWordsToDisplay + ")");
+							filledPixels = filledPixels
+									.concat(itemFilledPixels);
 							j = attemptCount;
 						} else if (overlap == 1 && j >= attemptCount - 1) {
-							console.log(displayWords[i].word
-									+ "(" + displayWords[i].frequency + ") cannot be placed. (" + attemptCount + " attempts.  DELETING. ("+ (i+1) + " of "
-									+ numberOfWordsToDisplay + ")");
-								deletedText++;
+							console.log(displayWords[i].word + "("
+									+ displayWords[i].frequency
+									+ ") cannot be placed. " + attemptCount
+									+ " attempts.  DELETING. (" + (i + 1)
+									+ " of " + numberOfWordsToDisplay + ")");
+							deletedText++;
 							svg.removeChild(textelement);
-						} 
+						}
 
 					}
-
-					// If overlap is still true after 10 random attempts,
-					// try
-					// to place text from top left to bottom right with 0
-					// degree transform
-
-					// Check to see if current position overlaps any other
-					// item
-
-					// If attempt to place with 0 degree transform fails,
-					// try to place text with 90 degree transform from top
-					// left to bottom right
-
-					// Check to see if current position overlaps any other
-					// item
-
-					// If all attempts fail, move to next item
 
 					// END POSITIONING OF ITEM
 
 				})(i);
 			}
-			 console.log("Deleted items: " + deletedText);
+			console.log("Deleted items: " + deletedText + " out of " + numberOfWordsToDisplay);
 		} else {
 			console.log("No words.");
 		}
