@@ -1,24 +1,59 @@
-function MorphoParserController($scope) {
-	$scope.renderSVG = function(data) {
-		render(data);
-	}
-	function render(words) {
-		if (words) {
-			var SVGheight = 300;
-			var SVGwidth = 600;
+function renderSVG(words, url) {
+	if (words) {
+		var svgWindow = window.open("", "SVGwindow", "width=700,height=400");
+
+		if (!svgWindow.document.getElementById('submitSettings')) {
+			svgWindow.document
+					.write("<form name='settings'>Height(px): <input type='number' name='svgHeight'></input><br>Width(px): <input type='number' name='svgWidth'></input><br>Number of Words to Display: <input type='number' name='svgNumberWords'></input><br>Precision (1-50): <input type='number' name='svgPrecision'></input></form><button id='submitSettings'>Generate</button>");
+		}
+
+		var myButton = svgWindow.document.getElementById('submitSettings');
+		myButton.onclick = function() {
+
+			var SVGheight = parseInt(svgWindow.document.settings.svgHeight.value);
+			var SVGwidth = parseInt(svgWindow.document.settings.svgWidth.value);
 			var SVGarea = SVGheight * SVGwidth;
-			var SVGxcoord = 50;
-			var SVGycoord = 50;
+			var SVGxcoord = 0;
+			var SVGycoord = 0;
 			var fillcolor = "white";
 			var fontfamily = "Arial";
 			var maxX = SVGwidth + SVGxcoord;
 			var maxY = SVGheight + SVGycoord;
-			var attemptCount = 20;
 			var deletedText = 0;
+
+			var numberOfWordsToDisplay = parseInt(svgWindow.document.settings.svgNumberWords.value);
+			var attemptCount = parseInt(svgWindow.document.settings.svgPrecision.value)
+
+			// Test to see if window already has svg div; if so, delete
+			// content from current svg div; else create svg div
+			if (svgWindow.document.getElementById('svgimage')) {
+				svgWindow.document.getElementById('svgimage').innerHTML = "";
+			} else {
+				svgWindow.document.write("<div id='svgimage'></div>");
+
+			}
+
+			// Make sure that values entered are integers
+			var intRegex = /^\d+$/;
+			if (!intRegex.test(numberOfWordsToDisplay)
+					|| !intRegex.test(attemptCount)) {
+				window.alert("Please try again.");
+				return;
+			}
+
+			if (attemptCount < 1) {
+				attemptCount = 1;
+			} else if (attemptCount > 50) {
+				attemptCount = 50;
+			}
+
+			svgWindow.focus();
+
+			// Create SVG object
 
 			var SVG = function(h, w) {
 				var NS = "http://www.w3.org/2000/svg";
-				var svg = document.createElementNS(NS, "svg");
+				var svg = svgWindow.document.createElementNS(NS, "svg");
 				svg.width = w;
 				svg.height = h;
 				svg.x = SVGxcoord;
@@ -28,7 +63,7 @@ function MorphoParserController($scope) {
 
 			var rect = function(h, w, fill) {
 				var NS = "http://www.w3.org/2000/svg";
-				var SVGObj = document.createElementNS(NS, "rect");
+				var SVGObj = svgWindow.document.createElementNS(NS, "rect");
 				SVGObj.width.baseVal.value = w;
 				SVGObj.height.baseVal.value = h;
 				SVGObj.setAttribute("height", h);
@@ -44,9 +79,10 @@ function MorphoParserController($scope) {
 			var svg = SVG(SVGheight, SVGwidth);
 			var r = rect(SVGheight, SVGwidth, fillcolor);
 
-			document.getElementById('svgimage').appendChild(svg);
+			svgWindow.document.getElementById('svgimage').appendChild(svg);
 			svg.appendChild(r);
 
+			// Get highest frequency in words
 			var maxValue = 0;
 			for (key in words) {
 				if (words[key] > maxValue) {
@@ -75,23 +111,14 @@ function MorphoParserController($scope) {
 				})(i);
 			}
 
-			var numberOfWordsToDisplay = prompt(
-					"Please enter the number of words to display. \n(max "
-							+ displayWords.length
-							+ ")\nPlease note that this may take several minutes.",
-					25);
-			var intRegex = /^\d+$/;
-			if (!intRegex.test(numberOfWordsToDisplay)) {
-				window.alert("Please try again.");
-				return;
-			}
-
-			if (numberOfWordsToDisplay > displayWords.length) {
-				console.log("Changing number of words to display.");
+			if (numberOfWordsToDisplay > 200 && displayWords.length > 200) {
+				numberOfWordsToDisplay = 200;
+			} else if (numberOfWordsToDisplay > 200
+					&& displayWords.length <= 200) {
 				numberOfWordsToDisplay = displayWords.length;
 			}
 
-			// Position words based on numberOfWordsToDisplay
+			// Position words
 			for ( var i = 0; i < numberOfWordsToDisplay; i++) {
 				(function(index) {
 
@@ -101,7 +128,7 @@ function MorphoParserController($scope) {
 					var color3 = Math.floor(Math.random() * 255);
 					var randBool = Math.floor(Math.random() * 2);
 
-					var textelement = document.createElementNS(
+					var textelement = svgWindow.document.createElementNS(
 							'http://www.w3.org/2000/svg', 'text');
 					textelement.setAttribute("id", displayWords[i].word);
 					textelement.setAttribute("style", "font-family:"
@@ -138,15 +165,19 @@ function MorphoParserController($scope) {
 
 						// Test to see if the textbox is out of bounds
 						if (transform == 0) {
-							var textboxwidth = document.getElementById(
-									displayWords[i].word).getBBox().width;
-							var textboxheight = document.getElementById(
-									displayWords[i].word).getBBox().height;
+							var textboxwidth = svgWindow.document
+									.getElementById(displayWords[i].word)
+									.getBBox().width;
+							var textboxheight = svgWindow.document
+									.getElementById(displayWords[i].word)
+									.getBBox().height;
 						} else {
-							var textboxwidth = document.getElementById(
-									displayWords[i].word).getBBox().height;
-							var textboxheight = document.getElementById(
-									displayWords[i].word).getBBox().width;
+							var textboxwidth = svgWindow.document
+									.getElementById(displayWords[i].word)
+									.getBBox().height;
+							var textboxheight = svgWindow.document
+									.getElementById(displayWords[i].word)
+									.getBBox().width;
 
 						}
 
@@ -230,14 +261,16 @@ function MorphoParserController($scope) {
 								(function(kindex) {
 									textelement.setAttribute("font-size",
 											kindex + 'px');
-									var textboxheight = document
+									var textboxheight = svgWindow.document
 											.getElementById(
 													displayWords[i].word)
 											.getBBox().width;
 									if (textboxheight < SVGheight) {
 										k = 10;
-										textboxwidth = document.getElementById(
-												displayWords[i].word).getBBox().height;
+										textboxwidth = svgWindow.document
+												.getElementById(
+														displayWords[i].word)
+												.getBBox().height;
 										otherxcoord = xcoord + textboxwidth;
 										otherycoord = ycoord + textboxheight;
 									}
@@ -252,7 +285,9 @@ function MorphoParserController($scope) {
 										+ ycoord + ")");
 
 						// Check to see if current position overlaps any
-						// other item; if so, loop (max 10); if not, set current
+						// other item; if so, loop (max attemptCount); if not,
+						// set
+						// current
 						// coordinates as filled
 						var itemFilledPixels = [];
 						var filledCoordinate = {};
@@ -314,10 +349,16 @@ function MorphoParserController($scope) {
 
 				})(i);
 			}
-			console.log("Deleted items: " + deletedText + " out of " + numberOfWordsToDisplay);
-		} else {
-			console.log("No words.");
-		}
+			console.log("Deleted items: " + deletedText + " out of "
+					+ numberOfWordsToDisplay);
+			svgWindow.document.getElementById('status').innerHTML = "";
+			window.alert("MorphoParser image complete!");
+			svgWindow.focus();
+
+		};
+
+	} else {
+		console.log("No words.");
+		svgWindow.document.getElementById('status').innerHTML = "";
 	}
-	;
-}
+};

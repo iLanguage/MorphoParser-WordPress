@@ -58,22 +58,11 @@ function display_words() {
 
 	$url = plugins_url();
 
-	//Create div to attach SVG to
-	echo "<div ng-app>";
-	echo "<div ng-controller='MorphoParserController'>";
-
-	//Run JavaScript to render SVG
-	echo "<script type='text/javascript' src='$url/MorphoParser-WordPress/js/angular.js'></script>";
+	//Load JavaScript to render SVG
 	echo "<script type='text/javascript' src='$url/MorphoParser-WordPress/js/rendersvg.js'></script>";
-	//echo "<script type='text/javascript'>renderSVG(";
-	//echo json_encode($words);
-	//echo ");</script>";
-	echo "<div><button ng-click='renderSVG(";
+	echo "<div><button onclick='renderSVG(";
 	echo json_encode($words);
-	echo ");'>RUN SCRIPT</button></div>";
-	echo "<div id='svgimage'></div>";
-	echo "</div>";
-	echo "</div>";
+	echo ",\"$url\");'>MorphoParser</button></div>";
 	
 
 }
